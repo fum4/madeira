@@ -10,7 +10,7 @@ function getTargetMidnight() {
 export function useCountdown() {
   const [target] = useState(getTargetMidnight)
   const [now, setNow] = useState(Date.now())
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const startedRef = useRef(false)
 
