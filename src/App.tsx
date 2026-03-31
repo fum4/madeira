@@ -36,6 +36,7 @@ function App() {
   const castVote = useMutation(api.votes.cast)
   const removeVote = useMutation(api.votes.remove)
   const addComment = useMutation(api.comments.add)
+  const updateComment = useMutation(api.comments.update)
   const deleteComment = useMutation(api.comments.remove)
   const renameUser = useMutation(api.users.rename)
 
@@ -137,11 +138,14 @@ function App() {
               onDeleteComment={(id) =>
                 deleteComment({ id: id as Id<'comments'> })
               }
+              onEditComment={(id, text) =>
+                updateComment({ id: id as Id<'comments'>, text })
+              }
               onDeleteAccommodation={(id) =>
                 removeAccommodation({ id: id as Id<'accommodations'> })
               }
-              onEditAccommodation={(id, url, title, imageUrl) =>
-                updateAccommodation({ id: id as Id<'accommodations'>, url, title, imageUrl })
+              onEditAccommodation={(id, url, title, imageUrl, tag) =>
+                updateAccommodation({ id: id as Id<'accommodations'>, url, title, imageUrl, tag })
               }
             />
           </>
@@ -152,8 +156,8 @@ function App() {
 
       {currentPage === 'accommodations' && (
         <AddAccommodation
-          onAdd={async (url, title, imageUrl) => {
-            await addAccommodation({ url, title, imageUrl, addedBy: userName })
+          onAdd={async (url, title, imageUrl, tag) => {
+            await addAccommodation({ url, title, imageUrl, addedBy: userName, tag })
           }}
         />
       )}

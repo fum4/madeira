@@ -13,8 +13,9 @@ interface AccommodationListProps {
   onRemoveVote: (accommodationId: string) => void
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
   onDeleteComment: (id: string) => void
+  onEditComment: (id: string, text: string) => void
   onDeleteAccommodation: (id: string) => void
-  onEditAccommodation: (id: string, url: string, title: string, imageUrl?: string) => void
+  onEditAccommodation: (id: string, url: string, title: string, imageUrl?: string, tag?: string) => void
 }
 
 export function AccommodationList({
@@ -30,6 +31,7 @@ export function AccommodationList({
   onRemoveVote,
   onAddComment,
   onDeleteComment,
+  onEditComment,
   onDeleteAccommodation,
   onEditAccommodation,
 }: AccommodationListProps) {
@@ -69,9 +71,10 @@ export function AccommodationList({
           onRemoveVote={onRemoveVote}
           onAddComment={onAddComment}
           onDeleteComment={onDeleteComment}
+          onEditComment={onEditComment}
           onDelete={onDeleteAccommodation}
-          onEdit={(url, title, imageUrl) =>
-            onEditAccommodation(accommodation._id, url, title, imageUrl)
+          onEdit={(url, title, imageUrl, tag) =>
+            onEditAccommodation(accommodation._id, url, title, imageUrl, tag)
           }
           index={i}
           highlight={accommodation._id === highlightId}

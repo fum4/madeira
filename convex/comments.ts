@@ -19,6 +19,16 @@ export const add = mutation({
   },
 })
 
+export const update = mutation({
+  args: {
+    id: v.id('comments'),
+    text: v.string(),
+  },
+  handler: async (ctx, { id, text }) => {
+    await ctx.db.patch(id, { text })
+  },
+})
+
 export const remove = mutation({
   args: { id: v.id('comments') },
   handler: async (ctx, { id }) => {

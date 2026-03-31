@@ -13,6 +13,7 @@ export const add = mutation({
     title: v.string(),
     imageUrl: v.optional(v.string()),
     addedBy: v.optional(v.string()),
+    tag: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert('accommodations', args)
@@ -25,6 +26,7 @@ export const update = mutation({
     url: v.string(),
     title: v.string(),
     imageUrl: v.optional(v.string()),
+    tag: v.optional(v.string()),
   },
   handler: async (ctx, { id, ...fields }) => {
     await ctx.db.patch(id, fields)

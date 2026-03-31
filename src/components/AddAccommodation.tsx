@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { TagPicker } from './TagPicker'
 
 interface AddAccommodationProps {
-  onAdd: (url: string, title: string, imageUrl?: string) => Promise<void>
+  onAdd: (url: string, title: string, imageUrl?: string, tag?: string) => Promise<void>
 }
 
 export function AddAccommodation({ onAdd }: AddAccommodationProps) {
@@ -9,6 +10,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
   const [url, setUrl] = useState('')
   const [title, setTitle] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [tag, setTag] = useState<string | undefined>()
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,10 +19,11 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
 
     setLoading(true)
     try {
-      await onAdd(url.trim(), title.trim(), imageUrl.trim() || undefined)
+      await onAdd(url.trim(), title.trim(), imageUrl.trim() || undefined, tag)
       setUrl('')
       setTitle('')
       setImageUrl('')
+      setTag(undefined)
       setOpen(false)
     } finally {
       setLoading(false)
@@ -29,7 +32,6 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
 
   return (
     <>
-      {/* FAB */}
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-amber text-bg shadow-lg shadow-amber/20 flex items-center justify-center text-2xl font-500 hover:bg-amber-bright active:scale-90 transition-all"
@@ -38,7 +40,6 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
         +
       </button>
 
-      {/* Modal overlay */}
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
@@ -90,6 +91,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
                 placeholder="Imagine (opțional, da nu fi leprǎ)"
                 className="w-full rounded-xl bg-bg-input border border-border px-4 py-3 text-sm text-text-bright placeholder:text-text-muted focus:outline-none focus:border-amber/40 transition-colors"
               />
+              <TagPicker value={tag} onChange={setTag} />
             </div>
 
             <button

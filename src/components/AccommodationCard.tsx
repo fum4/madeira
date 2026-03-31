@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { VoteSelector } from './VoteSelector'
+import { TagPicker } from './TagPicker'
+import { getTag } from '../tags'
 import { VoteSummary } from './VoteSummary'
 import { CommentSection } from './CommentSection'
 
 interface AccommodationCardProps {
-  accommodation: { _id: string; url: string; title: string; imageUrl?: string; addedBy?: string }
+  accommodation: { _id: string; url: string; title: string; imageUrl?: string; addedBy?: string; tag?: string }
   accommodations: { _id: string; title: string; imageUrl?: string }[]
   score: number
   votes: { _id: string; accommodationId: string; userName: string; stars: number }[]
@@ -15,8 +17,9 @@ interface AccommodationCardProps {
   onRemoveVote: (accommodationId: string) => void
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
   onDeleteComment: (id: string) => void
+  onEditComment: (id: string, text: string) => void
   onDelete: (id: string) => void
-  onEdit: (url: string, title: string, imageUrl?: string) => void
+  onEdit: (url: string, title: string, imageUrl?: string, tag?: string) => void
   index: number
   highlight?: boolean
   onHighlightDone?: () => void
@@ -34,6 +37,7 @@ export function AccommodationCard({
   onRemoveVote,
   onAddComment,
   onDeleteComment,
+  onEditComment,
   onDelete,
   onEdit,
   index,
@@ -46,6 +50,7 @@ export function AccommodationCard({
   const [editUrl, setEditUrl] = useState(accommodation.url)
   const [editTitle, setEditTitle] = useState(accommodation.title)
   const [editImageUrl, setEditImageUrl] = useState(accommodation.imageUrl ?? '')
+  const [editTag, setEditTag] = useState<string | undefined>(accommodation.tag)
   const [showCopied, setShowCopied] = useState(false)
   const [showLinkCopied, setShowLinkCopied] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -91,7 +96,7 @@ export function AccommodationCard({
   return (
     <div
       ref={cardRef}
-      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-hidden transition-all hover:border-border-light ${
+      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-visible transition-all hover:border-border-light ${
         highlight
           ? 'border-amber/50 shadow-[0_0_24px_rgba(240,160,48,0.2)] animate-[pulse-glow_1.5s_ease-in-out_2]'
           : 'border-border'
@@ -140,8 +145,16 @@ export function AccommodationCard({
               </span>
             )}
           </div>
-          {(pros > 0 || cons > 0) && (
-            <div className="flex gap-1.5 mt-1.5">
+          {(pros > 0 || cons > 0 || accommodation.tag) && (
+            <div className="flex gap-1.5 mt-1.5 flex-wrap">
+              {accommodation.tag && (() => {
+                const tag = getTag(accommodation.tag)
+                return tag ? (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-dim text-amber border border-amber/10">
+                    {tag.emoji} {tag.label}
+                  </span>
+                ) : null
+              })()}
               {pros > 0 && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-dim text-green border border-green/10">
                   +{pros}
@@ -222,6 +235,7 @@ export function AccommodationCard({
             userName={userName}
             onAdd={(type, text) => onAddComment(accommodation._id, type, text)}
             onDelete={onDeleteComment}
+            onEdit={onEditComment}
           />
 
           <div className="flex items-center gap-3">
@@ -230,6 +244,7 @@ export function AccommodationCard({
                 setEditUrl(accommodation.url)
                 setEditTitle(accommodation.title)
                 setEditImageUrl(accommodation.imageUrl ?? '')
+                setEditTag(accommodation.tag)
                 setShowEditDialog(true)
               }}
               className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-bright transition-colors"
@@ -310,7 +325,7 @@ export function AccommodationCard({
             onSubmit={(e) => {
               e.preventDefault()
               if (editUrl.trim() && editTitle.trim()) {
-                onEdit(editUrl.trim(), editTitle.trim(), editImageUrl.trim() || undefined)
+                onEdit(editUrl.trim(), editTitle.trim(), editImageUrl.trim() || undefined, editTag)
                 setShowEditDialog(false)
               }
             }}
@@ -353,6 +368,7 @@ export function AccommodationCard({
                 placeholder="Imagine (opțional, da nu fi leprǎ)"
                 className="w-full rounded-xl bg-bg-input border border-border px-4 py-3 text-sm text-text-bright placeholder:text-text-muted focus:outline-none focus:border-amber/40 transition-colors"
               />
+              <TagPicker value={editTag} onChange={setEditTag} />
             </div>
             <button
               type="submit"
