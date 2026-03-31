@@ -133,7 +133,7 @@ export function AccommodationCard({
           `}
         >
           <span className="text-lg font-700 leading-none">{score}</span>
-          <span className="text-[9px] opacity-60">pts</span>
+          <span className="text-[9px] opacity-60">banane</span>
         </div>
 
         <div className="flex-1 min-w-0">
