@@ -114,7 +114,7 @@ function App() {
           </div>
         ) : currentPage === 'accommodations' ? (
           <>
-            <ScoreBoard accommodations={accommodations} scores={scores} />
+            <ScoreBoard accommodations={accommodations} scores={scores} onSelect={setHighlightId} />
             <TagFilter selected={tagFilter} onChange={setTagFilter} />
             <AccommodationList
               accommodations={filteredAccommodations}

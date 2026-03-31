@@ -1,9 +1,10 @@
 interface ScoreBoardProps {
   accommodations: { _id: string; title: string }[]
   scores: Record<string, number>
+  onSelect: (id: string) => void
 }
 
-export function ScoreBoard({ accommodations, scores }: ScoreBoardProps) {
+export function ScoreBoard({ accommodations, scores, onSelect }: ScoreBoardProps) {
   if (accommodations.length === 0) return null
 
   const ranked = accommodations
@@ -19,9 +20,10 @@ export function ScoreBoard({ accommodations, scores }: ScoreBoardProps) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none px-4 -mx-4">
       {ranked.map((a, i) => (
-        <div
+        <button
           key={a._id}
-          className="flex-shrink-0 flex items-center gap-2 rounded-full bg-bg-elevated border border-border px-3 py-1.5 text-sm animate-fade-in"
+          onClick={() => onSelect(a._id)}
+          className="flex-shrink-0 flex items-center gap-2 rounded-full bg-bg-elevated border border-border px-3 py-1.5 text-sm animate-fade-in hover:border-border-light transition-colors"
           style={{ animationDelay: `${i * 60}ms` }}
         >
           <span className="text-base">{medals[i] ?? `#${i + 1}`}</span>
@@ -29,7 +31,7 @@ export function ScoreBoard({ accommodations, scores }: ScoreBoardProps) {
             {a.title}
           </span>
           <span className="text-yellow-400 font-600 tabular-nums">{a.score} 🍌</span>
-        </div>
+        </button>
       ))}
     </div>
   )
