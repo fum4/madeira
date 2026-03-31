@@ -54,7 +54,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
           >
             <div className="flex items-center justify-between">
               <h2 className="font-[var(--font-display)] text-lg font-600 text-text-bright">
-                Add a place
+                Adaugǎ o cocioabǎ
               </h2>
               <button
                 type="button"
