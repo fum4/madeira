@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
 import type { Id } from '../convex/_generated/dataModel'
@@ -7,6 +7,7 @@ import { Header } from './components/Header'
 import { ScoreBoard } from './components/ScoreBoard'
 import { AccommodationList } from './components/AccommodationList'
 import { AddAccommodation } from './components/AddAccommodation'
+import { VoteOverview } from './components/VoteOverview'
 
 const STORAGE_KEY = 'madeira-stays-user'
 
@@ -30,11 +31,13 @@ function App() {
   const comments = useQuery(api.comments.list)
 
   const addAccommodation = useMutation(api.accommodations.add)
+  const updateAccommodation = useMutation(api.accommodations.update)
   const removeAccommodation = useMutation(api.accommodations.remove)
   const castVote = useMutation(api.votes.cast)
   const removeVote = useMutation(api.votes.remove)
   const addComment = useMutation(api.comments.add)
   const deleteComment = useMutation(api.comments.remove)
+  const renameUser = useMutation(api.users.rename)
 
   const scores = useMemo(() => {
     if (!votes) return {}
@@ -51,6 +54,21 @@ function App() {
     [votes, userName]
   )
 
+  const [currentPage, setCurrentPage] = useState<'accommodations' | 'votes'>('accommodations')
+  const [highlightId, setHighlightId] = useState<string | null>(null)
+
+  // Handle ?highlight=<id> from share links
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get('highlight')
+    if (id) {
+      setHighlightId(id)
+      setCurrentPage('accommodations')
+      // Clean URL without reload
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
+
   if (!userName) {
     return <NameEntry onSubmit={setUserName} />
   }
@@ -59,7 +77,22 @@ function App() {
 
   return (
     <div className="min-h-dvh flex flex-col">
-      <Header userName={userName} onChangeName={clearUser} />
+      <Header
+        userName={userName}
+        hasVoted={userVotes.length > 0}
+        onChangeName={clearUser}
+        onRename={async (newName) => {
+          try {
+            await renameUser({ oldName: userName, newName })
+            setUserName(newName)
+            return null
+          } catch (e) {
+            return e instanceof Error ? e.message : 'Ceva n-a mers'
+          }
+        }}
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
+      />
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-5 space-y-4">
         {loading ? (
@@ -68,7 +101,7 @@ function App() {
               <div key={i} className="skeleton h-20 rounded-2xl" />
             ))}
           </div>
-        ) : (
+        ) : currentPage === 'accommodations' ? (
           <>
             <ScoreBoard accommodations={accommodations} scores={scores} />
             <AccommodationList
@@ -78,6 +111,8 @@ function App() {
               comments={comments}
               userName={userName}
               userVotes={userVotes}
+              highlightId={highlightId}
+              onHighlightDone={() => setHighlightId(null)}
               onVote={(accId, stars) =>
                 castVote({
                   accommodationId: accId as Id<'accommodations'>,
@@ -105,16 +140,23 @@ function App() {
               onDeleteAccommodation={(id) =>
                 removeAccommodation({ id: id as Id<'accommodations'> })
               }
+              onEditAccommodation={(id, url, title, imageUrl) =>
+                updateAccommodation({ id: id as Id<'accommodations'>, url, title, imageUrl })
+              }
             />
           </>
+        ) : (
+          <VoteOverview votes={votes} accommodations={accommodations} />
         )}
       </main>
 
-      <AddAccommodation
-        onAdd={async (url, title, imageUrl) => {
-          await addAccommodation({ url, title, imageUrl })
-        }}
-      />
+      {currentPage === 'accommodations' && (
+        <AddAccommodation
+          onAdd={async (url, title, imageUrl) => {
+            await addAccommodation({ url, title, imageUrl, addedBy: userName })
+          }}
+        />
+      )}
     </div>
   )
 }

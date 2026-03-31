@@ -1,17 +1,20 @@
 import { AccommodationCard } from './AccommodationCard'
 
 interface AccommodationListProps {
-  accommodations: { _id: string; url: string; title: string; imageUrl?: string }[]
+  accommodations: { _id: string; url: string; title: string; imageUrl?: string; addedBy?: string }[]
   scores: Record<string, number>
   votes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   comments: { _id: string; accommodationId: string; userName: string; type: 'pro' | 'con'; text: string }[]
   userName: string
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
+  highlightId: string | null
+  onHighlightDone: () => void
   onVote: (accommodationId: string, stars: 1 | 2 | 3) => void
   onRemoveVote: (accommodationId: string) => void
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
   onDeleteComment: (id: string) => void
   onDeleteAccommodation: (id: string) => void
+  onEditAccommodation: (id: string, url: string, title: string, imageUrl?: string) => void
 }
 
 export function AccommodationList({
@@ -21,11 +24,14 @@ export function AccommodationList({
   comments,
   userName,
   userVotes,
+  highlightId,
+  onHighlightDone,
   onVote,
   onRemoveVote,
   onAddComment,
   onDeleteComment,
   onDeleteAccommodation,
+  onEditAccommodation,
 }: AccommodationListProps) {
   const sorted = [...accommodations].sort(
     (a, b) => (scores[b._id] || 0) - (scores[a._id] || 0)
@@ -64,7 +70,12 @@ export function AccommodationList({
           onAddComment={onAddComment}
           onDeleteComment={onDeleteComment}
           onDelete={onDeleteAccommodation}
+          onEdit={(url, title, imageUrl) =>
+            onEditAccommodation(accommodation._id, url, title, imageUrl)
+          }
           index={i}
+          highlight={accommodation._id === highlightId}
+          onHighlightDone={onHighlightDone}
         />
       ))}
     </div>

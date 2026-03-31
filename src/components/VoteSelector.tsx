@@ -8,6 +8,16 @@ interface VoteSelectorProps {
   onRemoveVote: (accommodationId: string) => void
 }
 
+const starSounds: Record<number, string> = {
+  1: '/1_star.mp3',
+  2: '/2_stars.wav',
+  3: '/3_stars.wav',
+}
+
+function playVoteSound(stars: 1 | 2 | 3) {
+  new Audio(starSounds[stars]).play().catch(() => {})
+}
+
 const starLabels = [
   { stars: 3 as const, label: '★★★', description: 'E ce tre frate' },
   { stars: 2 as const, label: '★★', description: 'Hai cǎ merge' },
@@ -56,6 +66,7 @@ export function VoteSelector({
       })
     } else {
       onVote(accommodationId, stars)
+      playVoteSound(stars)
     }
   }
 
@@ -134,6 +145,7 @@ export function VoteSelector({
               <button
                 onClick={() => {
                   onVote(accommodationId, pendingVote.stars)
+                  playVoteSound(pendingVote.stars)
                   setPendingVote(null)
                 }}
                 className="flex-1 rounded-xl bg-amber text-bg font-600 text-sm px-4 py-2.5 hover:bg-amber-bright transition-colors active:scale-[0.98]"

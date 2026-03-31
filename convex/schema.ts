@@ -6,6 +6,7 @@ export default defineSchema({
     url: v.string(),
     title: v.string(),
     imageUrl: v.optional(v.string()),
+    addedBy: v.optional(v.string()),
   }),
 
   votes: defineTable({

@@ -70,7 +70,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Airbnb or Booking.com link"
+                placeholder="Bagǎ linku"
                 autoFocus
                 required
                 className="w-full rounded-xl bg-bg-input border border-border px-4 py-3 text-sm text-text-bright placeholder:text-text-muted focus:outline-none focus:border-amber/40 transition-colors"
@@ -79,7 +79,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Give it a name (e.g. 'Ocean view villa')"
+                placeholder="Dǎ-i un nume (ex: Cocioaba lui Naşu)"
                 required
                 className="w-full rounded-xl bg-bg-input border border-border px-4 py-3 text-sm text-text-bright placeholder:text-text-muted focus:outline-none focus:border-amber/40 transition-colors"
               />
@@ -87,7 +87,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="Image URL (optional)"
+                placeholder="Imagine (opțional, da nu fi leprǎ)"
                 className="w-full rounded-xl bg-bg-input border border-border px-4 py-3 text-sm text-text-bright placeholder:text-text-muted focus:outline-none focus:border-amber/40 transition-colors"
               />
             </div>
@@ -97,7 +97,7 @@ export function AddAccommodation({ onAdd }: AddAccommodationProps) {
               disabled={loading || !url.trim() || !title.trim()}
               className="w-full rounded-xl bg-amber text-bg font-600 text-sm px-4 py-3 hover:bg-amber-bright disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
-              {loading ? 'Adding...' : 'Add listing'}
+              {loading ? 'Se rezolvǎ...' : 'Rezolv-o'}
             </button>
           </form>
         </div>
