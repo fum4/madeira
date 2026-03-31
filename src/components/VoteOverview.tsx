@@ -1,9 +1,10 @@
 interface VoteOverviewProps {
   votes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   accommodations: { _id: string; title: string; imageUrl?: string }[]
+  onSelectAccommodation: (id: string) => void
 }
 
-export function VoteOverview({ votes, accommodations }: VoteOverviewProps) {
+export function VoteOverview({ votes, accommodations, onSelectAccommodation }: VoteOverviewProps) {
   // Group votes by user
   const byUser = new Map<string, { accommodationId: string; stars: number }[]>()
   for (const v of votes) {
@@ -44,15 +45,16 @@ export function VoteOverview({ votes, accommodations }: VoteOverviewProps) {
             </div>
             <div className="space-y-1.5">
               {sorted.map((v) => (
-                <div
+                <button
                   key={v.accommodationId}
-                  className="flex items-center gap-2 text-sm"
+                  onClick={() => onSelectAccommodation(v.accommodationId)}
+                  className="flex items-center gap-2 text-sm w-full text-left hover:bg-bg-elevated rounded-lg px-1 -mx-1 py-0.5 transition-colors"
                 >
-                  <span className="text-amber font-600 w-12 shrink-0 tabular-nums">
+                  <span className="text-amber font-600 shrink-0 whitespace-nowrap w-16 inline-block">
                     {'🍌'.repeat(v.stars)}
                   </span>
-                  <span className="text-text truncate">{getTitle(v.accommodationId)}</span>
-                </div>
+                  <span className="text-text truncate hover:text-amber transition-colors">{getTitle(v.accommodationId)}</span>
+                </button>
               ))}
               {sorted.length < 3 && (
                 <p className="text-xs text-text-muted italic">

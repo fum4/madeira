@@ -165,7 +165,14 @@ function App() {
             />
           </>
         ) : (
-          <VoteOverview votes={votes} accommodations={accommodations} />
+          <VoteOverview
+            votes={votes}
+            accommodations={accommodations}
+            onSelectAccommodation={(id) => {
+              setHighlightId(id)
+              setCurrentPage('accommodations')
+            }}
+          />
         )}
       </main>
 
