@@ -14,6 +14,7 @@ interface AccommodationCardProps {
   commentReactions: { _id: string; commentId: string; userName: string; type: 'like' | 'dislike' }[]
   userName: string
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
+  votingDisabled: boolean
   onVote: (accommodationId: string, stars: 1 | 2 | 3) => void
   onRemoveVote: (accommodationId: string) => void
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
@@ -36,6 +37,7 @@ export function AccommodationCard({
   commentReactions,
   userName,
   userVotes,
+  votingDisabled,
   onVote,
   onRemoveVote,
   onAddComment,
@@ -230,6 +232,7 @@ export function AccommodationCard({
             accommodationId={accommodation._id}
             userVotes={userVotes}
             accommodations={accommodations}
+            disabled={votingDisabled}
             onVote={onVote}
             onRemoveVote={onRemoveVote}
           />

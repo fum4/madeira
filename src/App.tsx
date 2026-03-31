@@ -10,6 +10,7 @@ import { AddAccommodation } from './components/AddAccommodation'
 import { VoteOverview } from './components/VoteOverview'
 import { TagFilter } from './components/TagFilter'
 import { CountdownBanner } from './components/CountdownBanner'
+import { useCountdown } from './hooks/useCountdown'
 
 const STORAGE_KEY = 'madeira-stays-user'
 
@@ -85,6 +86,7 @@ function App() {
     return <NameEntry onSubmit={setUserName} />
   }
 
+  const countdown = useCountdown()
   const loading = accommodations === undefined || votes === undefined || comments === undefined || commentReactions === undefined
 
   return (
@@ -107,7 +109,7 @@ function App() {
       />
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-5 space-y-4">
-        <CountdownBanner />
+        <CountdownBanner {...countdown} />
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -128,6 +130,7 @@ function App() {
               userVotes={userVotes}
               highlightId={highlightId}
               onHighlightDone={() => setHighlightId(null)}
+              votingDisabled={countdown.expired}
               onVote={(accId, stars) =>
                 castVote({
                   accommodationId: accId as Id<'accommodations'>,

@@ -4,6 +4,7 @@ interface VoteSelectorProps {
   accommodationId: string
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   accommodations: { _id: string; title: string; imageUrl?: string }[]
+  disabled?: boolean
   onVote: (accommodationId: string, stars: 1 | 2 | 3) => void
   onRemoveVote: (accommodationId: string) => void
 }
@@ -28,6 +29,7 @@ export function VoteSelector({
   accommodationId,
   userVotes,
   accommodations,
+  disabled,
   onVote,
   onRemoveVote,
 }: VoteSelectorProps) {
@@ -51,6 +53,7 @@ export function VoteSelector({
   }
 
   const handleVoteClick = (stars: 1 | 2 | 3) => {
+    if (disabled) return
     if (currentVote?.stars === stars) {
       onRemoveVote(accommodationId)
       return
@@ -83,9 +86,10 @@ export function VoteSelector({
             <button
               key={stars}
               onClick={() => handleVoteClick(stars)}
+              disabled={disabled && !isActive}
               className={`
                 flex-1 rounded-lg py-2.5 px-2 text-center transition-all active:scale-95
-                ${
+                ${disabled && !isActive ? 'opacity-30 cursor-not-allowed ' : ''}${
                   isActive
                     ? 'bg-amber/20 border-amber/50 text-amber border shadow-[0_0_12px_rgba(240,160,48,0.15)]'
                     : 'bg-bg-input border border-border text-text-muted hover:text-text hover:border-border-light'
