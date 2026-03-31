@@ -67,7 +67,7 @@ export function AccommodationCard({
     if (highlight && cardRef.current) {
       setExpanded(true)
       setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         // Clear highlight after animation
         setTimeout(() => onHighlightDone?.(), 2000)
       }, 100)
@@ -100,7 +100,7 @@ export function AccommodationCard({
   return (
     <div
       ref={cardRef}
-      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-hidden transition-all hover:border-border-light ${
+      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-hidden transition-all hover:border-border-light scroll-mt-[12px] ${
         highlight
           ? 'border-amber/50 shadow-[0_0_24px_rgba(240,160,48,0.2)] animate-[pulse-glow_1.5s_ease-in-out_2]'
           : 'border-border'
