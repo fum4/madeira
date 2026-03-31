@@ -145,7 +145,7 @@ export function AccommodationCard({
             {accommodation.addedBy && <span>· {accommodation.addedBy}</span>}
             {currentUserVote && (
               <span className="text-amber">
-                {'★'.repeat(currentUserVote.stars)}
+                {'🍌'.repeat(currentUserVote.stars)}
               </span>
             )}
           </div>

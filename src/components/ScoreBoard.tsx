@@ -28,7 +28,7 @@ export function ScoreBoard({ accommodations, scores }: ScoreBoardProps) {
           <span className="text-text-bright font-500 truncate max-w-[120px]">
             {a.title}
           </span>
-          <span className="text-amber font-600 tabular-nums">{a.score}★</span>
+          <span className="text-amber font-600 tabular-nums">{a.score}🍌</span>
         </div>
       ))}
     </div>

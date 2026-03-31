@@ -23,7 +23,7 @@ export function VoteSummary({ votes, currentUser }: VoteSummaryProps) {
           `}
         >
           <span className="font-500">{v.userName}</span>
-          <span className="text-amber">{'★'.repeat(v.stars)}</span>
+          <span className="text-amber">{'🍌'.repeat(v.stars)}</span>
         </div>
       ))}
     </div>

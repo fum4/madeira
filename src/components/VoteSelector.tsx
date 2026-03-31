@@ -19,9 +19,9 @@ function playVoteSound(stars: 1 | 2 | 3) {
 }
 
 const starLabels = [
-  { stars: 3 as const, label: '★★★', description: 'E ce tre frate' },
-  { stars: 2 as const, label: '★★', description: 'Hai cǎ merge' },
-  { stars: 1 as const, label: '★', description: 'Sǎ zicem' },
+  { stars: 3 as const, label: '🍌🍌🍌', description: 'E ce tre frate' },
+  { stars: 2 as const, label: '🍌🍌', description: 'Hai cǎ merge' },
+  { stars: 1 as const, label: '🍌', description: 'Sǎ zicem' },
 ]
 
 export function VoteSelector({
@@ -102,7 +102,7 @@ export function VoteSelector({
       </div>
       {currentVote && (
         <p className="text-xs text-amber/70 text-center">
-          You gave this place {currentVote.stars}★
+          You gave this place {currentVote.stars}🍌
         </p>
       )}
 
@@ -128,10 +128,10 @@ export function VoteSelector({
             )}
            <div className="p-5 space-y-4">
             <div className="text-3xl text-amber">
-              {'★'.repeat(pendingVote.existingStars)}
+              {'🍌'.repeat(pendingVote.existingStars)}
             </div>
             <p className="text-sm text-text-bright leading-relaxed">
-              You already gave <span className="font-600 text-amber">{pendingVote.existingStars}★</span> to{' '}
+              You already gave <span className="font-600 text-amber">{pendingVote.existingStars}🍌</span> to{' '}
               <span className="font-600 text-text-bright">"{pendingVote.existingTitle}"</span>.
               Move it here instead?
             </p>

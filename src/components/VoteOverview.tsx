@@ -49,7 +49,7 @@ export function VoteOverview({ votes, accommodations }: VoteOverviewProps) {
                   className="flex items-center gap-2 text-sm"
                 >
                   <span className="text-amber font-600 w-12 shrink-0 tabular-nums">
-                    {'★'.repeat(v.stars)}
+                    {'🍌'.repeat(v.stars)}
                   </span>
                   <span className="text-text truncate">{getTitle(v.accommodationId)}</span>
                 </div>
