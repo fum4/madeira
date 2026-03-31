@@ -8,6 +8,7 @@ import { ScoreBoard } from './components/ScoreBoard'
 import { AccommodationList } from './components/AccommodationList'
 import { AddAccommodation } from './components/AddAccommodation'
 import { VoteOverview } from './components/VoteOverview'
+import { TagFilter } from './components/TagFilter'
 
 const STORAGE_KEY = 'madeira-stays-user'
 
@@ -57,6 +58,13 @@ function App() {
 
   const [currentPage, setCurrentPage] = useState<'accommodations' | 'votes'>('accommodations')
   const [highlightId, setHighlightId] = useState<string | null>(null)
+  const [tagFilter, setTagFilter] = useState<Set<string>>(new Set())
+
+  const filteredAccommodations = useMemo(() => {
+    if (!accommodations) return []
+    if (tagFilter.size === 0) return accommodations
+    return accommodations.filter((a) => a.tag && tagFilter.has(a.tag))
+  }, [accommodations, tagFilter])
 
   // Handle ?highlight=<id> from share links
   useEffect(() => {
@@ -105,8 +113,9 @@ function App() {
         ) : currentPage === 'accommodations' ? (
           <>
             <ScoreBoard accommodations={accommodations} scores={scores} />
+            <TagFilter selected={tagFilter} onChange={setTagFilter} />
             <AccommodationList
-              accommodations={accommodations}
+              accommodations={filteredAccommodations}
               scores={scores}
               votes={votes}
               comments={comments}

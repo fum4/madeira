@@ -19,7 +19,7 @@ export function TagPicker({ value, onChange }: TagPickerProps) {
               : 'bg-bg-input border-border text-text-muted hover:text-text hover:border-border-light'
           }`}
         >
-          {tag.emoji} {tag.label}
+          {tag.emoji}&ensp;{tag.label}
         </button>
       ))}
     </div>

@@ -150,8 +150,8 @@ export function AccommodationCard({
               {accommodation.tag && (() => {
                 const tag = getTag(accommodation.tag)
                 return tag ? (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-dim text-amber border border-amber/10">
-                    {tag.emoji} {tag.label}
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-bg-elevated text-text-muted border border-border">
+                    {tag.label}
                   </span>
                 ) : null
               })()}
