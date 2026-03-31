@@ -144,7 +144,7 @@ function CommentItem({
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-7 z-50 animate-fade-in-scale bg-bg-card border border-border rounded-xl shadow-lg shadow-black/30 overflow-hidden min-w-[210px]">
+                <div className="absolute right-0 top-full mt-1 z-50 animate-fade-in-scale bg-bg-card border border-border rounded-xl shadow-lg shadow-black/30 overflow-hidden min-w-[210px]">
                   <button
                     onClick={() => {
                       setEditText(comment.text)

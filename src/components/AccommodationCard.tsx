@@ -100,7 +100,7 @@ export function AccommodationCard({
   return (
     <div
       ref={cardRef}
-      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-visible transition-all hover:border-border-light ${
+      className={`animate-fade-in rounded-2xl bg-bg-card border overflow-hidden transition-all hover:border-border-light ${
         highlight
           ? 'border-amber/50 shadow-[0_0_24px_rgba(240,160,48,0.2)] animate-[pulse-glow_1.5s_ease-in-out_2]'
           : 'border-border'
@@ -108,7 +108,7 @@ export function AccommodationCard({
       style={{ animationDelay: `${index * 80}ms` }}
     >
       {accommodation.imageUrl && (
-        <div className="aspect-[16/9] overflow-hidden rounded-t-2xl cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="aspect-[16/9] overflow-hidden cursor-pointer" onClick={() => setExpanded(!expanded)}>
           <img
             src={accommodation.imageUrl}
             alt={accommodation.title}
