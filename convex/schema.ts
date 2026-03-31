@@ -26,4 +26,12 @@ export default defineSchema({
     type: v.union(v.literal('pro'), v.literal('con')),
     text: v.string(),
   }).index('by_accommodation', ['accommodationId']),
+
+  commentReactions: defineTable({
+    commentId: v.id('comments'),
+    userName: v.string(),
+    type: v.union(v.literal('like'), v.literal('dislike')),
+  })
+    .index('by_comment', ['commentId'])
+    .index('by_user_comment', ['userName', 'commentId']),
 })

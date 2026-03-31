@@ -11,6 +11,7 @@ interface AccommodationCardProps {
   score: number
   votes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   comments: { _id: string; accommodationId: string; userName: string; type: 'pro' | 'con'; text: string }[]
+  commentReactions: { _id: string; commentId: string; userName: string; type: 'like' | 'dislike' }[]
   userName: string
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   onVote: (accommodationId: string, stars: 1 | 2 | 3) => void
@@ -18,6 +19,7 @@ interface AccommodationCardProps {
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
   onDeleteComment: (id: string) => void
   onEditComment: (id: string, text: string) => void
+  onToggleReaction: (commentId: string, type: 'like' | 'dislike') => void
   onDelete: (id: string) => void
   onEdit: (url: string, title: string, imageUrl?: string, tag?: string) => void
   index: number
@@ -31,6 +33,7 @@ export function AccommodationCard({
   score,
   votes,
   comments,
+  commentReactions,
   userName,
   userVotes,
   onVote,
@@ -38,6 +41,7 @@ export function AccommodationCard({
   onAddComment,
   onDeleteComment,
   onEditComment,
+  onToggleReaction,
   onDelete,
   onEdit,
   index,
@@ -232,10 +236,12 @@ export function AccommodationCard({
 
           <CommentSection
             comments={comments}
+            commentReactions={commentReactions}
             userName={userName}
             onAdd={(type, text) => onAddComment(accommodation._id, type, text)}
             onDelete={onDeleteComment}
             onEdit={onEditComment}
+            onToggleReaction={onToggleReaction}
           />
 
           <div className="flex items-center gap-3">

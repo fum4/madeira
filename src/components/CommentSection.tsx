@@ -1,11 +1,17 @@
 import { useState } from 'react'
 
+interface Reaction {
+  _id: string; commentId: string; userName: string; type: 'like' | 'dislike'
+}
+
 interface CommentSectionProps {
   comments: { _id: string; userName: string; type: 'pro' | 'con'; text: string }[]
+  commentReactions: Reaction[]
   userName: string
   onAdd: (type: 'pro' | 'con', text: string) => void
   onDelete: (id: string) => void
   onEdit: (id: string, text: string) => void
+  onToggleReaction: (commentId: string, type: 'like' | 'dislike') => void
 }
 
 function CommentInput({
@@ -56,17 +62,27 @@ function CommentInput({
 function CommentItem({
   comment,
   isOwn,
+  reactions,
+  currentUser,
   onDelete,
   onEdit,
+  onToggleReaction,
 }: {
   comment: { _id: string; userName: string; text: string }
   isOwn: boolean
+  reactions: Reaction[]
+  currentUser: string
   onDelete: () => void
   onEdit: (text: string) => void
+  onToggleReaction: (type: 'like' | 'dislike') => void
 }) {
   const [editing, setEditing] = useState(false)
   const [editText, setEditText] = useState(comment.text)
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const likes = reactions.filter((r) => r.type === 'like')
+  const dislikes = reactions.filter((r) => r.type === 'dislike')
+  const myReaction = reactions.find((r) => r.userName === currentUser)
 
   if (editing) {
     return (
@@ -106,66 +122,93 @@ function CommentItem({
   }
 
   return (
-    <div className="flex items-start justify-between gap-1 py-1">
-      <div className="min-w-0">
-        <p className="text-xs text-text-bright leading-relaxed">{comment.text}</p>
-        <p className="text-[10px] text-text-muted">— {comment.userName}</p>
-      </div>
-      {isOwn && (
-        <div className="relative shrink-0">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-text hover:text-text-bright hover:bg-bg-elevated transition-colors"
-            aria-label="Comment options"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <circle cx="12" cy="5" r="2" />
-              <circle cx="12" cy="12" r="2" />
-              <circle cx="12" cy="19" r="2" />
-            </svg>
-          </button>
-          {menuOpen && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 top-7 z-50 animate-fade-in-scale bg-bg-card border border-border rounded-xl shadow-lg shadow-black/30 overflow-hidden min-w-[210px]">
-                <button
-                  onClick={() => {
-                    setEditText(comment.text)
-                    setEditing(true)
-                    setMenuOpen(false)
-                  }}
-                  className="w-full text-left px-3 py-2.5 text-xs flex items-center gap-2 text-text-bright hover:bg-bg-elevated transition-colors"
-                >
-                  <span className="text-amber">✎</span>
-                  M-a luat gura pe dinainte
-                </button>
-                <button
-                  onClick={() => {
-                    onDelete()
-                    setMenuOpen(false)
-                  }}
-                  className="w-full text-left px-3 py-2.5 text-xs flex items-center gap-2 text-red hover:bg-red-dim transition-colors"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  Numai zic nimic
-                </button>
-              </div>
-            </>
-          )}
+    <div className="py-1.5 space-y-1">
+      <div className="flex items-start justify-between gap-1">
+        <div className="min-w-0">
+          <p className="text-xs text-text-bright leading-relaxed">{comment.text}</p>
+          <p className="text-[10px] text-text-muted">— {comment.userName}</p>
         </div>
-      )}
+        {isOwn && (
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="w-7 h-7 flex items-center justify-center rounded-md text-text hover:text-text-bright hover:bg-bg-elevated transition-colors"
+              aria-label="Comment options"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="5" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="12" cy="19" r="2" />
+              </svg>
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div className="absolute right-0 top-7 z-50 animate-fade-in-scale bg-bg-card border border-border rounded-xl shadow-lg shadow-black/30 overflow-hidden min-w-[210px]">
+                  <button
+                    onClick={() => {
+                      setEditText(comment.text)
+                      setEditing(true)
+                      setMenuOpen(false)
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-xs flex items-center gap-2 text-text-bright hover:bg-bg-elevated transition-colors"
+                  >
+                    <span className="text-amber">✎</span>
+                    M-a luat gura pe dinainte
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDelete()
+                      setMenuOpen(false)
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-xs flex items-center gap-2 text-red hover:bg-red-dim transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Numai zic nimic
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+      {/* Like / Dislike */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onToggleReaction('like')}
+          className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full border transition-colors ${
+            myReaction?.type === 'like'
+              ? 'bg-green-dim border-green/20 text-green'
+              : 'border-border text-text-muted hover:text-text hover:border-border-light'
+          }`}
+        >
+          👍 {likes.length > 0 && likes.length}
+        </button>
+        <button
+          onClick={() => onToggleReaction('dislike')}
+          className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full border transition-colors ${
+            myReaction?.type === 'dislike'
+              ? 'bg-red-dim border-red/20 text-red'
+              : 'border-border text-text-muted hover:text-text hover:border-border-light'
+          }`}
+        >
+          🍆 {dislikes.length > 0 && dislikes.length}
+        </button>
+      </div>
     </div>
   )
 }
 
 export function CommentSection({
   comments,
+  commentReactions,
   userName,
   onAdd,
   onDelete,
   onEdit,
+  onToggleReaction,
 }: CommentSectionProps) {
   const [prosOpen, setProsOpen] = useState(true)
   const [consOpen, setConsOpen] = useState(true)
@@ -179,7 +222,7 @@ export function CommentSection({
       <div className="rounded-lg border border-green/10 overflow-visible">
         <button
           onClick={() => setProsOpen(!prosOpen)}
-          className="w-full flex items-center justify-between px-3 py-2 bg-green-dim hover:bg-green/[0.08] transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2 bg-green-dim hover:bg-green/[0.08] transition-colors rounded-t-lg"
         >
           <div className="text-xs font-600 text-green flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-green" />
@@ -201,14 +244,17 @@ export function CommentSection({
             {pros.length === 0 && (
               <p className="text-xs text-text-muted italic py-1">Nimic de bine momentan</p>
             )}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {pros.map((c) => (
                 <CommentItem
                   key={c._id}
                   comment={c}
                   isOwn={c.userName === userName}
+                  reactions={commentReactions.filter((r) => r.commentId === c._id)}
+                  currentUser={userName}
                   onDelete={() => onDelete(c._id)}
                   onEdit={(text) => onEdit(c._id, text)}
+                  onToggleReaction={(type) => onToggleReaction(c._id, type)}
                 />
               ))}
             </div>
@@ -225,7 +271,7 @@ export function CommentSection({
       <div className="rounded-lg border border-red/10 overflow-visible">
         <button
           onClick={() => setConsOpen(!consOpen)}
-          className="w-full flex items-center justify-between px-3 py-2 bg-red-dim hover:bg-red/[0.08] transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2 bg-red-dim hover:bg-red/[0.08] transition-colors rounded-t-lg"
         >
           <div className="text-xs font-600 text-red flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-red" />
@@ -247,14 +293,17 @@ export function CommentSection({
             {cons.length === 0 && (
               <p className="text-xs text-text-muted italic py-1">Niciun cârcotaş încǎ</p>
             )}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {cons.map((c) => (
                 <CommentItem
                   key={c._id}
                   comment={c}
                   isOwn={c.userName === userName}
+                  reactions={commentReactions.filter((r) => r.commentId === c._id)}
+                  currentUser={userName}
                   onDelete={() => onDelete(c._id)}
                   onEdit={(text) => onEdit(c._id, text)}
+                  onToggleReaction={(type) => onToggleReaction(c._id, type)}
                 />
               ))}
             </div>

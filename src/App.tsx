@@ -30,6 +30,7 @@ function App() {
   const accommodations = useQuery(api.accommodations.list)
   const votes = useQuery(api.votes.list)
   const comments = useQuery(api.comments.list)
+  const commentReactions = useQuery(api.commentReactions.list)
 
   const addAccommodation = useMutation(api.accommodations.add)
   const updateAccommodation = useMutation(api.accommodations.update)
@@ -40,6 +41,7 @@ function App() {
   const updateComment = useMutation(api.comments.update)
   const deleteComment = useMutation(api.comments.remove)
   const renameUser = useMutation(api.users.rename)
+  const toggleReaction = useMutation(api.commentReactions.toggle)
 
   const scores = useMemo(() => {
     if (!votes) return {}
@@ -82,7 +84,7 @@ function App() {
     return <NameEntry onSubmit={setUserName} />
   }
 
-  const loading = accommodations === undefined || votes === undefined || comments === undefined
+  const loading = accommodations === undefined || votes === undefined || comments === undefined || commentReactions === undefined
 
   return (
     <div className="min-h-dvh flex flex-col">
@@ -119,6 +121,7 @@ function App() {
               scores={scores}
               votes={votes}
               comments={comments}
+              commentReactions={commentReactions}
               userName={userName}
               userVotes={userVotes}
               highlightId={highlightId}
@@ -155,6 +158,9 @@ function App() {
               }
               onEditAccommodation={(id, url, title, imageUrl, tag) =>
                 updateAccommodation({ id: id as Id<'accommodations'>, url, title, imageUrl, tag })
+              }
+              onToggleReaction={(commentId, type) =>
+                toggleReaction({ commentId: commentId as Id<'comments'>, userName, type })
               }
             />
           </>

@@ -32,6 +32,13 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id('comments') },
   handler: async (ctx, { id }) => {
+    const reactions = await ctx.db
+      .query('commentReactions')
+      .withIndex('by_comment', (q) => q.eq('commentId', id))
+      .collect()
+    for (const r of reactions) {
+      await ctx.db.delete(r._id)
+    }
     await ctx.db.delete(id)
   },
 })

@@ -5,6 +5,7 @@ interface AccommodationListProps {
   scores: Record<string, number>
   votes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   comments: { _id: string; accommodationId: string; userName: string; type: 'pro' | 'con'; text: string }[]
+  commentReactions: { _id: string; commentId: string; userName: string; type: 'like' | 'dislike' }[]
   userName: string
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   highlightId: string | null
@@ -16,6 +17,7 @@ interface AccommodationListProps {
   onEditComment: (id: string, text: string) => void
   onDeleteAccommodation: (id: string) => void
   onEditAccommodation: (id: string, url: string, title: string, imageUrl?: string, tag?: string) => void
+  onToggleReaction: (commentId: string, type: 'like' | 'dislike') => void
 }
 
 export function AccommodationList({
@@ -23,6 +25,7 @@ export function AccommodationList({
   scores,
   votes,
   comments,
+  commentReactions,
   userName,
   userVotes,
   highlightId,
@@ -34,6 +37,7 @@ export function AccommodationList({
   onEditComment,
   onDeleteAccommodation,
   onEditAccommodation,
+  onToggleReaction,
 }: AccommodationListProps) {
   const sorted = [...accommodations].sort(
     (a, b) => (scores[b._id] || 0) - (scores[a._id] || 0)
@@ -65,6 +69,9 @@ export function AccommodationList({
           comments={comments.filter(
             (c) => c.accommodationId === accommodation._id
           )}
+          commentReactions={commentReactions.filter(
+            (r) => comments.some((c) => c._id === r.commentId && c.accommodationId === accommodation._id)
+          )}
           userName={userName}
           userVotes={userVotes}
           onVote={onVote}
@@ -72,6 +79,7 @@ export function AccommodationList({
           onAddComment={onAddComment}
           onDeleteComment={onDeleteComment}
           onEditComment={onEditComment}
+          onToggleReaction={onToggleReaction}
           onDelete={onDeleteAccommodation}
           onEdit={(url, title, imageUrl, tag) =>
             onEditAccommodation(accommodation._id, url, title, imageUrl, tag)

@@ -9,6 +9,7 @@
  */
 
 import type * as accommodations from "../accommodations.js";
+import type * as commentReactions from "../commentReactions.js";
 import type * as comments from "../comments.js";
 import type * as users from "../users.js";
 import type * as votes from "../votes.js";
@@ -21,6 +22,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   accommodations: typeof accommodations;
+  commentReactions: typeof commentReactions;
   comments: typeof comments;
   users: typeof users;
   votes: typeof votes;
