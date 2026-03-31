@@ -104,7 +104,7 @@ export function AccommodationCard({
       style={{ animationDelay: `${index * 80}ms` }}
     >
       {accommodation.imageUrl && (
-        <div className="aspect-[16/9] overflow-hidden cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="aspect-[16/9] overflow-hidden rounded-t-2xl cursor-pointer" onClick={() => setExpanded(!expanded)}>
           <img
             src={accommodation.imageUrl}
             alt={accommodation.title}
