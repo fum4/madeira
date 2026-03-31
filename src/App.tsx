@@ -1,0 +1,122 @@
+import { useState, useCallback, useMemo } from 'react'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '../convex/_generated/api'
+import type { Id } from '../convex/_generated/dataModel'
+import { NameEntry } from './components/NameEntry'
+import { Header } from './components/Header'
+import { ScoreBoard } from './components/ScoreBoard'
+import { AccommodationList } from './components/AccommodationList'
+import { AddAccommodation } from './components/AddAccommodation'
+
+const STORAGE_KEY = 'madeira-stays-user'
+
+function App() {
+  const [userName, setUserNameState] = useState<string | null>(
+    () => localStorage.getItem(STORAGE_KEY)
+  )
+
+  const setUserName = useCallback((name: string) => {
+    localStorage.setItem(STORAGE_KEY, name)
+    setUserNameState(name)
+  }, [])
+
+  const clearUser = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY)
+    setUserNameState(null)
+  }, [])
+
+  const accommodations = useQuery(api.accommodations.list)
+  const votes = useQuery(api.votes.list)
+  const comments = useQuery(api.comments.list)
+
+  const addAccommodation = useMutation(api.accommodations.add)
+  const removeAccommodation = useMutation(api.accommodations.remove)
+  const castVote = useMutation(api.votes.cast)
+  const removeVote = useMutation(api.votes.remove)
+  const addComment = useMutation(api.comments.add)
+  const deleteComment = useMutation(api.comments.remove)
+
+  const scores = useMemo(() => {
+    if (!votes) return {}
+    const map: Record<string, number> = {}
+    for (const v of votes) {
+      const key = v.accommodationId as string
+      map[key] = (map[key] || 0) + v.stars
+    }
+    return map
+  }, [votes])
+
+  const userVotes = useMemo(
+    () => (votes ?? []).filter((v) => v.userName === userName),
+    [votes, userName]
+  )
+
+  if (!userName) {
+    return <NameEntry onSubmit={setUserName} />
+  }
+
+  const loading = accommodations === undefined || votes === undefined || comments === undefined
+
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <Header userName={userName} onChangeName={clearUser} />
+
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-5 space-y-4">
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="skeleton h-20 rounded-2xl" />
+            ))}
+          </div>
+        ) : (
+          <>
+            <ScoreBoard accommodations={accommodations} scores={scores} />
+            <AccommodationList
+              accommodations={accommodations}
+              scores={scores}
+              votes={votes}
+              comments={comments}
+              userName={userName}
+              userVotes={userVotes}
+              onVote={(accId, stars) =>
+                castVote({
+                  accommodationId: accId as Id<'accommodations'>,
+                  userName,
+                  stars,
+                })
+              }
+              onRemoveVote={(accId) =>
+                removeVote({
+                  accommodationId: accId as Id<'accommodations'>,
+                  userName,
+                })
+              }
+              onAddComment={(accId, type, text) =>
+                addComment({
+                  accommodationId: accId as Id<'accommodations'>,
+                  userName,
+                  type,
+                  text,
+                })
+              }
+              onDeleteComment={(id) =>
+                deleteComment({ id: id as Id<'comments'> })
+              }
+              onDeleteAccommodation={(id) =>
+                removeAccommodation({ id: id as Id<'accommodations'> })
+              }
+            />
+          </>
+        )}
+      </main>
+
+      <AddAccommodation
+        onAdd={async (url, title, imageUrl) => {
+          await addAccommodation({ url, title, imageUrl })
+        }}
+      />
+    </div>
+  )
+}
+
+export default App
