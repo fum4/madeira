@@ -10,7 +10,7 @@ interface AccommodationListProps {
   userVotes: { _id: string; accommodationId: string; userName: string; stars: number }[]
   highlightId: string | null
   onHighlightDone: () => void
-  votingDisabled: boolean
+  votingDisabled?: boolean
   onVote: (accommodationId: string, stars: 1 | 2 | 3) => void
   onRemoveVote: (accommodationId: string) => void
   onAddComment: (accommodationId: string, type: 'pro' | 'con', text: string) => void
